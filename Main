@@ -1,0 +1,39 @@
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+
+
+void Titulo();
+  
+int total_afd = 0;
+int afd_validos = 0;
+
+int main() {
+    int opc;
+    do {
+        cout << "Indique el tipo de Autómata Finito Determinista a registrar: " << endl;
+        cout << "1. Traducción\n" << "2. Validación\n" << "3. Salir\n" << "Opción: ";
+        cin>>opc;
+        switch (opc) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3: cout << "El total de AFDs Ingresados fue de: " << total_afd << endl;
+                cout << "El total de AFDs Válidos es de: " << afd_validos << endl;
+                cout << "El total de AFD's Inválidos es de: " << total_afd - afd_validos << endl;
+                cout <<"\nGracias!... Cerrando sistema";
+                break;
+            default: cout << "Opción inválida\n";
+        }
+    } while (opc != 3);
+
+    return 0;
+}
+
+void Titulo() {
+
+}
