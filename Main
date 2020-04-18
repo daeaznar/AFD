@@ -58,6 +58,7 @@ void Alfabeto_S(); //Ingresar alfabeto de salida
 void Estados(); //Conjunto de Estados Posibles
 void Estado_Inicial(); //Estado Inicial de Operación
 void Estados_Aceptacion(); //Conjunto de Estados de Aceptación
+void Matriz();
 
 int total_afd = 0;
 int afd_trad = 0;
@@ -88,7 +89,14 @@ int main() {
                     Estados_Aceptacion();
                     cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
                     break;
-                case 2:
+                case 2: Alfabeto_E();
+                    cout << "\n*Alfabeto de entrada guardado*\n" << endl;
+                    Estados();
+                    cout << "\n*Conjunto de Estados Posibles guardado*\n" << endl;
+                    Estado_Inicial();
+                    cout << "\n*Estado Inicial de Operación guardado*\n" << endl;
+                    Estados_Aceptacion();
+                    cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
                     break;
                 case 3: cout << endl;
                     cout << "El total de AFDs Ingresados fue de: " << total_afd << endl;
@@ -407,4 +415,8 @@ void Estados_Aceptacion() {
         ptr=ptr->sig;
     }
     cout<<endl;
+}
+
+void Matriz(){
+    
 }
