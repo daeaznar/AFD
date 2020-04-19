@@ -42,7 +42,7 @@ estados *q0 = NULL;
 
 struct matriz { //estructura para nodos de la matriz
     string simbolo;
-    string traduccion;
+    char traduccion;
     estados *transicion; //apunta a los estados posibles
     matriz *sig;
 };
@@ -58,7 +58,9 @@ void Alfabeto_S(); //Ingresar alfabeto de salida
 void Estados(); //Conjunto de Estados Posibles
 void Estado_Inicial(); //Estado Inicial de Operación
 void Estados_Aceptacion(); //Conjunto de Estados de Aceptación
-void Matriz();
+void Matriz_Transicion(); //llena matriz con datos de transición
+void Matriz_Traduccion(); //llena matriz con datos de traducción
+void Palabra();
 
 int total_afd = 0;
 int afd_trad = 0;
@@ -88,6 +90,10 @@ int main() {
                     cout << "\n*Estado Inicial de Operación guardado*\n" << endl;
                     Estados_Aceptacion();
                     cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
+                    Matriz_Transicion();
+                    cout << "\n*Matriz de Transición guardada*\n" << endl;
+                    Matriz_Traduccion();
+                    cout << "\n*Matriz de Traducción guardada*\n" << endl;
                     break;
                 case 2: Alfabeto_E();
                     cout << "\n*Alfabeto de entrada guardado*\n" << endl;
@@ -97,6 +103,8 @@ int main() {
                     cout << "\n*Estado Inicial de Operación guardado*\n" << endl;
                     Estados_Aceptacion();
                     cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
+                    Matriz_Transicion();
+                    cout << "\n*Matriz de Transición guardada*\n" << endl;
                     break;
                 case 3: cout << endl;
                     cout << "El total de AFDs Ingresados fue de: " << total_afd << endl;
@@ -355,7 +363,7 @@ void Estados() {
             }
         }
     }
-    total_estados = i-1;
+    total_estados = i - 1;
     cout << "El total de estado es: " << total_estados << endl;
     ptr = inicio;
     cout << "El Conjunto de estados de aceptación es: ";
@@ -367,6 +375,8 @@ void Estados() {
 }
 
 void Estado_Inicial() {
+    if (q0 != NULL)
+        delete(q0);
     string q;
     bool check; //check true = no existe el dato; check = false ya existe
     while (true) {
@@ -392,31 +402,134 @@ void Estado_Inicial() {
 
 void Estados_Aceptacion() {
     char estado;
+    bool validar_opc; //valida que el "estado" sea T o F, otro caracter marca opción inválida
     cout << "Determine el conjunto de Estados de Aceptación\n";
     cout << "'T' = True (Estado aceptado)\n" << "'F' = False (Estado NO aceptado)" << endl;
     ptr = inicio;
     while (ptr != NULL) {
-        cout << ptr->dato << "----------";
-        cin>>estado;
-        switch (estado) {
-            case 'T': ptr->validacion = true;
-                break;
-            case 'F': ptr->validacion = false;
-                break;
-            default: cout << "--Opción Inválida, vuelve a intentar--\n" << endl;
-        }
+        do {
+            validar_opc = true;
+            cout << ptr->dato << "---------->";
+            cin>>estado;
+            switch (estado) {
+                case 'T': ptr->validacion = true;
+                    break;
+                case 'F': ptr->validacion = false;
+                    break;
+                default: cout << "\n--Opción Inválida, vuelve a intentar--\n" << endl;
+                    validar_opc = false;
+            }
+        } while (validar_opc != true);
         ptr = ptr->sig;
     }
-    cout <<"Los Estados de Aceptación del conjunto son: ";
-    ptr=inicio;
-    while(ptr!=NULL){
-        if(ptr->validacion==true)
-            cout<< ptr->dato<<" ";
-        ptr=ptr->sig;
+    cout << "Los Estados de Aceptación del conjunto son: ";
+    ptr = inicio;
+    while (ptr != NULL) {
+        if (ptr->validacion == true)
+            cout << ptr->dato << " ";
+        ptr = ptr->sig;
     }
-    cout<<endl;
+    cout << endl;
 }
 
-void Matriz(){
+void Matriz_Transicion() {
+    string temp; //temporal para seleccionar el estado a apuntar
+    bool check; //check true = no existe el dato; check = false ya existe
+    estados *ptr_temp = NULL;
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+        for (ptr_e = inicio_e; ptr_e != NULL; ptr_e = ptr_e->sig) {
+            if (inicio_m == NULL) {
+                nuevo_m = new(matriz);
+                nuevo_m->simbolo = ptr_e->simbolo;
+                inicio_m = nuevo_m;
+                fin_m = nuevo_m;
+                fin_m->sig = NULL;
+            } else {
+                nuevo_m = new(matriz);
+                nuevo_m->simbolo = ptr_e->simbolo;
+                fin_m->sig = nuevo_m;
+                fin_m = nuevo_m;
+                fin_m->sig = NULL;
+            }
+        }
+        ptr->aristas = inicio_m;
+        inicio_m = NULL;
+        fin_m = NULL;
+        nuevo_m = NULL;
+    }
+    cout << "Ingrese Matriz de Transición: " << endl;
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+        for (ptr_m = ptr->aristas; ptr_m != NULL; ptr_m = ptr_m->sig) {
+            while (true) {
+                cout << ptr->dato << " - " << ptr_m->simbolo << "---------->";
+                cin >> temp;
+                check = true;
+                ptr_temp = inicio;
+                while (ptr_temp != NULL) {
+                    if (ptr_temp->dato == temp) {
+                        check = false;
+                        break;
+                    }
+                    ptr_temp = ptr_temp->sig;
+                }
+                if (check == false) {
+                    ptr_m->transicion = ptr_temp;
+                    break;
+                } else
+                    cout << "--El estado ingresado no pertenece a Q, vuelva a intentar--\n" << endl;
+            }
+        }
+    }
+    cout << "\n\n\n";
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+        for (ptr_m = ptr->aristas; ptr_m != NULL; ptr_m = ptr_m->sig) {
+            cout << ptr->dato << " - " << ptr_m->simbolo << "---------->" << ptr_m->transicion->dato << endl;
+        }
+    }
+}
+
+void Matriz_Traduccion() {
+    string temp;
+    bool check; //check true = no existe el dato; check = false ya existe
+    alfabeto_S *ptr_temp = NULL;
+    cout << "Ingrese Matriz de Traducción: " << endl;
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+        for (ptr_m = ptr->aristas; ptr_m != NULL; ptr_m = ptr_m->sig) {
+            while (true) {
+                cout << ptr->dato << " - " << ptr_m->simbolo << "---------->";
+                cin >> temp;
+                if (temp.length() != 1) //Verificar la longitud de caracteres ingresados, máximo 1
+                    cout << "--Solamente puede ingresar un símbolo a la vez--\n" << endl;
+                else {
+                    char simb = temp[0];
+                    check = true;
+                    ptr_temp = inicio_s;
+                    while (ptr_temp != NULL) {
+                        if (ptr_temp->simbolo == simb) {
+                            check = false;
+                            break;
+                        }
+                        ptr_temp = ptr_temp->sig;
+                    }
+                    if (check == false) {
+                        ptr_m->traduccion = ptr_temp->simbolo;
+                        break;
+                    } else
+                        cout << "--El símbolo ingresado no pertenece al Alfabeto de Salida, vuelva a intentar--\n" << endl;
+                }
+            }
+
+        }
+    }
+    cout << "\n\n\n";
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+        for (ptr_m = ptr->aristas; ptr_m != NULL; ptr_m = ptr_m->sig) {
+            cout << ptr->dato << " - " << ptr_m->simbolo << "---------->" << ptr_m->traduccion << endl;
+        }
+    }
+}
+
+void Palabra(){
     
 }
+
