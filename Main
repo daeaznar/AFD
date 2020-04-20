@@ -99,6 +99,8 @@ int main() {
                     Matriz_Traduccion();
                     cout << "\n*Matriz de Traducción guardada*\n" << endl;
                     Palabra_T();
+                    ++total_afd;
+                    ++afd_trad;
                     break;
                 case 2: Alfabeto_E();
                     cout << "\n*Alfabeto de entrada guardado*\n" << endl;
@@ -111,6 +113,8 @@ int main() {
                     Matriz_Transicion();
                     cout << "\n*Matriz de Transición guardada*\n" << endl;
                     Palabra_V();
+                    ++total_afd;
+                    ++afd_valid;
                     break;
                 case 3: cout << endl;
                     cout << "El total de AFDs Ingresados fue de: " << total_afd << endl;
@@ -118,7 +122,7 @@ int main() {
                     cout << "El total de AFDs de Validación fue de: " << afd_valid << endl;
                     cout << "El total de palabras ingresadas fue de: " << total_palabras << endl;
                     cout << "El total de palabras traducidas fue de: " << palabras_t << endl;
-                    cout << "El total de palabras validadas fue de: " << palabras_v << endl;
+                    cout << "El total de palabras validas fue de: " << palabras_v << endl;
                     cout << "El total de palabras inválidas fue de: " << total_palabras - palabras_v << endl;
                     cout << "\nGracias!... Cerrando sistema" << endl;
                     break;
@@ -167,7 +171,6 @@ void Alfabeto_E() {
             }
             char simb = simb_t[0]; //Pasar el string a un char
             int ascii_simb = (int) simb; //regresa el valor ingresado en codigo ASCII
-            cout << "ascii: " << ascii_simb << endl;
             if (ascii_simb >= 48 && ascii_simb <= 57 || ascii_simb >= 65 && ascii_simb <= 90 || ascii_simb >= 97 && ascii_simb <= 122 || ascii_simb == -15 || ascii_simb == -47) {
                 //Para que solo admita letras en español mayúsculas, minúsculas y números del 0 al 9
                 if (inicio_e == NULL) {
@@ -245,7 +248,6 @@ void Alfabeto_S() {
             }
             char simb = simb_t[0]; //Pasar el string a un char
             int ascii_simb = (int) simb; //regresa el valor ingresado en codigo ASCII
-            cout << "ascii: " << ascii_simb << endl;
             if (ascii_simb >= 48 && ascii_simb <= 57 || ascii_simb >= 65 && ascii_simb <= 90 || ascii_simb >= 97 && ascii_simb <= 122 || ascii_simb == -15 || ascii_simb == -47) {
                 //Para que solo admita letras en español mayúsculas, minúsculas y números del 0 al 9
                 if (inicio_s == NULL) {
@@ -309,6 +311,7 @@ void Estados() {
     total_estados = 0;
     string estado;
     int i = 1;
+    bool s;
     bool check; //verificar si el estado ya se registró 
     //check true = no existe el dato; check = false ya existe
     cout << "Ingrese el conjunto de estados posibles 'Q' (seleccione '*' para terminar): " << endl;
@@ -325,15 +328,13 @@ void Estados() {
                     break;
             }
             int longitud = estado.length();
-            cout << "La longitud es: " << longitud << endl;
             int j;
             for (j = 0; j < longitud; j++) {
                 char simb = estado[j]; //Pasar el string a un char
                 int ascii_simb = (int) simb; //regresa el valor ingresado en codigo ASCII
-                cout << "ascii: " << ascii_simb << endl;
                 if (ascii_simb >= 48 && ascii_simb <= 57 || ascii_simb >= 65 && ascii_simb <= 90 || ascii_simb >= 97 && ascii_simb <= 122 || ascii_simb == -15 || ascii_simb == -47)
                     //Para que solo admita letras en español mayúsculas, minúsculas y números del 0 al 9
-                    cout << "Estado aceptado" << endl;
+                    s = true;
                 else {
                     if (estado != "*")
                         cout << "--El estado contiene símbolos inválidos--\n" << endl;
@@ -373,7 +374,7 @@ void Estados() {
         }
     }
     total_estados = i - 1;
-    cout << "El total de estado es: " << total_estados << endl;
+    cout << "El total de estados es: " << total_estados << endl;
     ptr = inicio;
     cout << "El Conjunto de estados de aceptación es: ";
     while (ptr != NULL) {
@@ -445,7 +446,7 @@ void Matriz_Transicion() {
     string temp; //temporal para seleccionar el estado a apuntar
     bool check; //check true = no existe el dato; check = false ya existe
     estados *ptr_temp = NULL;
-    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) {
+    for (ptr = inicio; ptr != NULL; ptr = ptr->sig) { //Llena matriz con símbolos de alfabeto de entrada
         for (ptr_e = inicio_e; ptr_e != NULL; ptr_e = ptr_e->sig) {
             if (inicio_m == NULL) {
                 nuevo_m = new(matriz);
@@ -546,20 +547,105 @@ void Palabra_T() {
     do {
         cout << "Ingrese palabra a Traducir: ";
         cin>> palabra;
-
         int longitud = palabra.length();
-        cout << "La longitud es: " << longitud << endl;
         int j;
         for (j = 0; j < longitud; j++) {
             char simb = palabra[j]; //Pasar el string a un char
             int ascii_simb = (int) simb; //regresa el valor ingresado en codigo ASCII
-            cout << "ascii: " << ascii_simb << endl;
             if (ascii_simb >= 48 && ascii_simb <= 57 || ascii_simb >= 65 && ascii_simb <= 90 || ascii_simb >= 97 && ascii_simb <= 122 || ascii_simb == -15 || ascii_simb == -47)
                 //Para que solo admita letras en español mayúsculas, minúsculas y números del 0 al 9
-                cout << "Palabra buena" << endl;
-            else
+                check = true;
+            else {
                 cout << "--La palabra contiene símbolos inválidos--\n" << endl;
-            break;
+                break;
+            }
+        }
+        for (j = 0; j < longitud; j++) {
+            char simb = palabra[j];
+            check = true;
+            ptr_e = inicio_e;
+            while (ptr_e != NULL) {
+                if (ptr_e->simbolo == simb) {
+                    check = false;
+                    break;
+                }
+                ptr_e = ptr_e->sig;
+            }
+            if (check == true) {
+                cout << "--La palabra contiene símbolos que no pertenecen al Alfabeto de Entrada--\n" << endl;
+                break;
+            }
+        }
+        int k = j;
+        if (j == longitud) {
+            cout << "La palabra traducida es: ";
+            ptr_m = q0->aristas;
+            j = 0;
+            char simb = palabra [j];
+            while (ptr_m != NULL) {
+                if (ptr_m->simbolo == simb)
+                    break;
+                ptr_m = ptr_m->sig;
+            }
+            cout << ptr_m->traduccion;
+
+            for (j = 1; j < longitud; j++) {
+                ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
+                ptr_m = ptr_m->transicion->aristas;
+                char simb = palabra [j];
+                while (ptr_m != NULL) {
+                    if (ptr_m->simbolo == simb)
+                        break;
+                    ptr_m = ptr_m->sig;
+                }
+                cout << ptr_m->traduccion;
+            }
+            cout << endl;
+        }
+        if (k == longitud) {
+            if (ptr->validacion == true) {
+                cout << "La palabra es Válida\n" << endl;
+                ++palabras_v;
+            } else
+                cout << "La palabra es Inválida\n" << endl;
+            ++palabras_t;
+            ++total_palabras;
+        }
+        do {
+            cout << "¿Desea ingresar otra palabra? (Si = 'S' ; No = 'N'): ";
+            cin>>opc;
+            cout << endl;
+            switch (opc) {
+                case 'S':
+
+                case 'N':
+                    break;
+                default: cout << "--Opción Inválida--\n" << endl;
+            }
+        } while (opc != 'S' && opc != 'N');
+    } while (opc != 'N');
+}
+
+void Palabra_V() {
+    char opc;
+    string palabra;
+    bool check; //verificar si el símbolo ya se registró 
+    //check true = no existe el dato; check = false ya existe
+    do {
+        cout << "Ingrese palabra a Validar: ";
+        cin>> palabra;
+        int longitud = palabra.length();
+        int j;
+        for (j = 0; j < longitud; j++) {
+            char simb = palabra[j]; //Pasar el string a un char
+            int ascii_simb = (int) simb; //regresa el valor ingresado en codigo ASCII
+            if (ascii_simb >= 48 && ascii_simb <= 57 || ascii_simb >= 65 && ascii_simb <= 90 || ascii_simb >= 97 && ascii_simb <= 122 || ascii_simb == -15 || ascii_simb == -47)
+                //Para que solo admita letras en español mayúsculas, minúsculas y números del 0 al 9
+                check = true;
+            else {
+                cout << "--La palabra contiene símbolos inválidos--\n" << endl;
+                break;
+            }
         }
         for (j = 0; j < longitud; j++) {
             char simb = palabra[j];
@@ -578,34 +664,39 @@ void Palabra_T() {
             }
         }
         if (j == longitud) {
-            cout << "Sí llega" << endl;
-            cout << "Todos los símbolos son válidos" << endl;
-            cout<<"Prueba q0, es: "<<q0->aristas->simbolo<<endl;
-            cout << "La palabra traducida es: ";
-
+            cout << "La palabra ingresada es: ";
             ptr_m = q0->aristas;
+            j = 0;
             char simb = palabra [j];
             while (ptr_m != NULL) {
                 if (ptr_m->simbolo == simb)
                     break;
+                ptr_m = ptr_m->sig;
             }
-            cout << ptr_m->traduccion;
-
             for (j = 1; j < longitud; j++) {
+                ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
                 ptr_m = ptr_m->transicion->aristas;
-                simb = palabra [j];
+                char simb = palabra [j];
                 while (ptr_m != NULL) {
                     if (ptr_m->simbolo == simb)
                         break;
+                    ptr_m = ptr_m->sig;
                 }
-                cout << ptr_m->traduccion;
             }
-            cout << endl;
         }
-
+        if (check = true) {
+            if (ptr->validacion == true) {
+                cout << "Válida" << endl;
+                ++palabras_v;
+            } else
+                cout << "Inválida" << endl;
+            ++palabras_t;
+            ++total_palabras;
+        }
         do {
-            cout << "¿Desea ingresar otra palabra? (Si = 'S' ; No = 'N'): ";
+            cout << "\n¿Desea ingresar otra palabra? (Si = 'S' ; No = 'N'): ";
             cin>>opc;
+            cout << endl;
             switch (opc) {
                 case 'S':
 
@@ -615,8 +706,4 @@ void Palabra_T() {
             }
         } while (opc != 'S' && opc != 'N');
     } while (opc != 'N');
-}
-
-void Palabra_V() {
-
 }
