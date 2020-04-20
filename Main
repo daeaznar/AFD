@@ -124,7 +124,7 @@ int main() {
                     cout << "El total de palabras traducidas fue de: " << palabras_t << endl;
                     cout << "El total de palabras validas fue de: " << palabras_v << endl;
                     cout << "El total de palabras inválidas fue de: " << total_palabras - palabras_v << endl;
-                    cout << "\nGracias!... Cerrando sistema" << endl;
+                    cout << "\n¡Gracias!... Cerrando sistema" << endl;
                     break;
                 default: cout << "---Opción inválida---\n" << endl;
             }
