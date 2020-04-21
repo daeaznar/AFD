@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <string>
 #include <cstring>
+#include <ctime>
 
 using namespace std;
 
@@ -62,6 +63,9 @@ void Matriz_Transicion(); //llena matriz con datos de transición
 void Matriz_Traduccion(); //llena matriz con datos de traducción
 void Palabra_T();
 void Palabra_V();
+void Borrar_Datos(); //borra todos los datos del afd 
+
+void Datos_Ingresados(); //Muestra los datos ya guardados en la consola
 
 int total_afd = 0;
 int afd_trad = 0;
@@ -74,7 +78,9 @@ int palabras_v;
 int main() {
     int opc;
     do {
-        cout << "\nIndique el tipo de Autómata Finito Determinista a registrar: " << endl;
+        Header();
+        cout << endl;
+        cout << "Indique el tipo de Autómata Finito Determinista a registrar: " << endl;
         cout << "1. Traducción\n" << "2. Validación\n" << "3. Salir\n" << "Opción: ";
         cin>>opc;
         cout << endl;
@@ -84,39 +90,83 @@ int main() {
             cin.ignore(1000, '\n'); //Para vaciar el buffer y pida de nuevo un cin
         } else {
             switch (opc) {
-                case 1: Alfabeto_E();
+                case 1: Header();
+                    cout << endl;
+                    Alfabeto_E();
                     cout << "\n*Alfabeto de entrada guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Alfabeto_S();
                     cout << "\n*Alfabeto de salida guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estados();
                     cout << "\n*Conjunto de Estados Posibles guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estado_Inicial();
                     cout << "\n*Estado Inicial de Operación guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estados_Aceptacion();
                     cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Matriz_Transicion();
                     cout << "\n*Matriz de Transición guardada*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Matriz_Traduccion();
+                    Datos_Ingresados();
                     cout << "\n*Matriz de Traducción guardada*\n" << endl;
+                    Header();
+                    cout << endl;
                     Palabra_T();
                     ++total_afd;
                     ++afd_trad;
+                    Borrar_Datos();
                     break;
-                case 2: Alfabeto_E();
+                case 2: Header();
+                    cout << endl;
+                    Alfabeto_E();
                     cout << "\n*Alfabeto de entrada guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estados();
                     cout << "\n*Conjunto de Estados Posibles guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estado_Inicial();
                     cout << "\n*Estado Inicial de Operación guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Estados_Aceptacion();
                     cout << "\n*Conjunto de Estados de Aceptación guardado*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Matriz_Transicion();
                     cout << "\n*Matriz de Transición guardada*\n" << endl;
+                    Header();
+                    Datos_Ingresados();
+                    cout << endl;
                     Palabra_V();
                     ++total_afd;
                     ++afd_valid;
+                    Borrar_Datos();
                     break;
                 case 3: cout << endl;
+                    Header();
+                    cout << "\n" << endl;
                     cout << "El total de AFDs Ingresados fue de: " << total_afd << endl;
                     cout << "El total de AFDs de Traducción fue de: " << afd_trad << endl;
                     cout << "El total de AFDs de Validación fue de: " << afd_valid << endl;
@@ -135,23 +185,53 @@ int main() {
 }
 
 void Header() {
+    time_t tSac = time(NULL);
+    struct tm* tmP = localtime(&tSac);
+    system("clear");
+    cout << setw(57) << "David Asaf Hernández Aznar\n";
+    cout << setw(48) << "#0121920211\n";
+    cout << setw(51) << "Métodos Formales\n";
+    cout << setw(45) << "UNIVA\n";
+    cout << setw(40) << "Hora: " << tmP->tm_hour << ":" << tmP->tm_min << ":" << tmP->tm_sec << endl;
+    cout << setw(40) << "Fecha: " << tmP->tm_mday << "/" << tmP->tm_mon + 1 << "/" << tmP->tm_year + 1900 << endl;
+}
+
+void Datos_Ingresados() {
+    ptr_e = inicio_e;
+    cout << "E: ";
+    while (ptr_e != NULL) {
+        cout << ptr_e->simbolo << " ";
+        ptr_e = ptr_e->sig;
+    }
+    cout << endl;
+
+    if (inicio_s != NULL) {
+        ptr_s = inicio_s;
+        cout << "S: ";
+        while (ptr_s != NULL) {
+            cout << ptr_s->simbolo << " ";
+            ptr_s = ptr_s->sig;
+        }
+        cout << endl;
+    }
+
+    if (inicio != NULL) {
+        ptr = inicio;
+        cout << "Q: ";
+        while (ptr != NULL) {
+            cout << ptr->dato << " ";
+            ptr = ptr->sig;
+        }
+        cout << endl;
+    }
+
+    if (q0 != NULL) {
+        cout << "q0: " << q0->dato << endl;
+    }
 
 }
 
 void Alfabeto_E() {
-    if (inicio_e != NULL) {
-        ptr_e = inicio_e;
-        while (ptr_e->sig != NULL) {
-            ptr_e = inicio_e;
-            inicio_e = ptr_e->sig;
-            delete(ptr_e);
-        }
-        delete(inicio_e);
-        inicio_e = NULL;
-        fin_e = NULL;
-        ptr_e = NULL;
-        nuevo_e = NULL;
-    }
     string simb_t;
     int i = 1;
     bool check; //checar si ya se ingresó el símbolo anteriormente. 
@@ -217,19 +297,6 @@ void Alfabeto_E() {
 }
 
 void Alfabeto_S() {
-    if (inicio_s != NULL) {
-        ptr_s = inicio_s;
-        while (ptr_s->sig != NULL) {
-            ptr_s = inicio_s;
-            inicio_s = ptr_s->sig;
-            delete(ptr_s);
-        }
-        delete(inicio_s);
-        inicio_s = NULL;
-        fin_s = NULL;
-        ptr_s = NULL;
-        nuevo_s = NULL;
-    }
     string simb_t;
     int i = 1;
     bool check; //check true = no existe el dato; check = false ya existe
@@ -295,19 +362,6 @@ void Alfabeto_S() {
 }
 
 void Estados() {
-    if (inicio != NULL) {
-        ptr = inicio;
-        while (ptr->sig != NULL) {
-            ptr = inicio;
-            inicio = ptr->sig;
-            delete(ptr);
-        }
-        delete(inicio);
-        inicio = NULL;
-        fin = NULL;
-        ptr = NULL;
-        nuevo = NULL;
-    }
     total_estados = 0;
     string estado;
     int i = 1;
@@ -376,7 +430,7 @@ void Estados() {
     total_estados = i - 1;
     cout << "El total de estados es: " << total_estados << endl;
     ptr = inicio;
-    cout << "El Conjunto de estados de aceptación es: ";
+    cout << "El Conjunto de estados de Posibles es: ";
     while (ptr != NULL) {
         cout << ptr->dato << " ";
         ptr = ptr->sig;
@@ -385,8 +439,6 @@ void Estados() {
 }
 
 void Estado_Inicial() {
-    if (q0 != NULL)
-        delete(q0);
     string q;
     bool check; //check true = no existe el dato; check = false ya existe
     while (true) {
@@ -545,6 +597,13 @@ void Palabra_T() {
     bool check; //verificar si el símbolo ya se registró 
     //check true = no existe el dato; check = false ya existe
     do {
+        ptr_e = inicio_e; //Muestra Alfabeto de Entrada
+        cout << "E: ";
+        while (ptr_e != NULL) {
+            cout << ptr_e->simbolo << " ";
+            ptr_e = ptr_e->sig;
+        }
+        cout << "\n" << endl;
         cout << "Ingrese palabra a Traducir: ";
         cin>> palabra;
         int longitud = palabra.length();
@@ -577,6 +636,7 @@ void Palabra_T() {
             }
         }
         int k = j;
+
         if (j == longitud) {
             cout << "La palabra traducida es: ";
             ptr_m = q0->aristas;
@@ -588,39 +648,52 @@ void Palabra_T() {
                 ptr_m = ptr_m->sig;
             }
             cout << ptr_m->traduccion;
-
-            for (j = 1; j < longitud; j++) {
-                ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
-                ptr_m = ptr_m->transicion->aristas;
-                char simb = palabra [j];
-                while (ptr_m != NULL) {
-                    if (ptr_m->simbolo == simb)
-                        break;
-                    ptr_m = ptr_m->sig;
+            if (k > 1) {
+                for (j = 1; j < longitud; j++) {
+                    ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
+                    ptr_m = ptr_m->transicion->aristas;
+                    char simb = palabra [j];
+                    while (ptr_m != NULL) {
+                        if (ptr_m->simbolo == simb)
+                            break;
+                        ptr_m = ptr_m->sig;
+                    }
+                    cout << ptr_m->traduccion;
                 }
-                cout << ptr_m->traduccion;
             }
             cout << endl;
         }
+
         if (k == longitud) {
-            if (ptr->validacion == true) {
-                cout << "La palabra es Válida\n" << endl;
-                ++palabras_v;
-            } else
-                cout << "La palabra es Inválida\n" << endl;
-            ++palabras_t;
-            ++total_palabras;
+            if (k <= 1) {
+                if (q0->validacion == true) {
+                    cout << "La palabra es Válida\n" << endl;
+                    ++palabras_v;
+                } else
+                    cout << "La palabra es Inválida\n" << endl;
+                ++palabras_t;
+                ++total_palabras;
+            } else {
+                if (ptr->validacion == true) {
+                    cout << "La palabra es Válida\n" << endl;
+                    ++palabras_v;
+                } else
+                    cout << "La palabra es Inválida\n" << endl;
+                ++palabras_t;
+                ++total_palabras;
+            }
         }
         do {
             cout << "¿Desea ingresar otra palabra? (Si = 'S' ; No = 'N'): ";
             cin>>opc;
             cout << endl;
             switch (opc) {
-                case 'S':
-
+                case 'S': Header();
+                    cout << endl;
                 case 'N':
                     break;
-                default: cout << "--Opción Inválida--\n" << endl;
+                default: Header();
+                    cout << "--Opción Inválida--\n" << endl;
             }
         } while (opc != 'S' && opc != 'N');
     } while (opc != 'N');
@@ -632,6 +705,13 @@ void Palabra_V() {
     bool check; //verificar si el símbolo ya se registró 
     //check true = no existe el dato; check = false ya existe
     do {
+        ptr_e = inicio_e; //Muestra Alfabeto de Entrada
+        cout << "E: ";
+        while (ptr_e != NULL) {
+            cout << ptr_e->simbolo << " ";
+            ptr_e = ptr_e->sig;
+        }
+        cout << "\n" << endl;
         cout << "Ingrese palabra a Validar: ";
         cin>> palabra;
         int longitud = palabra.length();
@@ -663,6 +743,10 @@ void Palabra_V() {
                 break;
             }
         }
+        int k = j;
+        cout << "k: " << k << endl;
+        cout << "j: " << j << endl;
+        cout << "long: " << longitud << endl;
         if (j == longitud) {
             cout << "La palabra ingresada es: ";
             ptr_m = q0->aristas;
@@ -673,37 +757,107 @@ void Palabra_V() {
                     break;
                 ptr_m = ptr_m->sig;
             }
-            for (j = 1; j < longitud; j++) {
-                ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
-                ptr_m = ptr_m->transicion->aristas;
-                char simb = palabra [j];
-                while (ptr_m != NULL) {
-                    if (ptr_m->simbolo == simb)
-                        break;
-                    ptr_m = ptr_m->sig;
+            if (j > 1) {
+                for (j = 1; j < longitud; j++) {
+                    ptr = ptr_m->transicion; //Para saber en qué estado está la secuencia
+                    ptr_m = ptr_m->transicion->aristas;
+                    char simb = palabra [j];
+                    while (ptr_m != NULL) {
+                        if (ptr_m->simbolo == simb)
+                            break;
+                        ptr_m = ptr_m->sig;
+                    }
                 }
             }
         }
         if (check = true) {
-            if (ptr->validacion == true) {
-                cout << "Válida" << endl;
-                ++palabras_v;
-            } else
-                cout << "Inválida" << endl;
-            ++palabras_t;
-            ++total_palabras;
+            if (k = 1) {
+                if (q0->validacion == true) {
+                    cout << "Válida" << endl;
+                    ++palabras_v;
+                } else
+                    cout << "Inválida" << endl;
+                ++palabras_t;
+                ++total_palabras;
+            } else {
+                if (ptr->validacion == true) {
+                    cout << "Válida" << endl;
+                    ++palabras_v;
+                } else
+                    cout << "Inválida" << endl;
+                ++palabras_t;
+                ++total_palabras;
+            }
         }
         do {
             cout << "\n¿Desea ingresar otra palabra? (Si = 'S' ; No = 'N'): ";
             cin>>opc;
             cout << endl;
             switch (opc) {
-                case 'S':
-
+                case 'S': Header();
+                    cout << endl;
                 case 'N':
                     break;
-                default: cout << "--Opción Inválida--\n" << endl;
+                default:
+                    cout << "--Opción Inválida--\n" << endl;
             }
         } while (opc != 'S' && opc != 'N');
     } while (opc != 'N');
+}
+
+void Borrar_Datos() {
+    ptr_e = inicio_e; //Borra Alfabeto de Entrada
+    while (ptr_e->sig != NULL) {
+        ptr_e = inicio_e;
+        inicio_e = ptr_e->sig;
+        delete(ptr_e);
+    }
+    delete(inicio_e);
+    inicio_e = NULL;
+    fin_e = NULL;
+    ptr_e = NULL;
+    nuevo_e = NULL;
+
+    if (inicio_s != NULL) { //Borra Alfabeto de Salida
+        ptr_s = inicio_s;
+        while (ptr_s->sig != NULL) {
+            ptr_s = inicio_s;
+            inicio_s = ptr_s->sig;
+            delete(ptr_s);
+        }
+        delete(inicio_s);
+        inicio_s = NULL;
+        fin_s = NULL;
+        ptr_s = NULL;
+        nuevo_s = NULL;
+    }
+    cout << "borra alf salida" << endl;
+
+    for (ptr = inicio; ptr->sig != NULL; ptr = ptr->sig) {
+        inicio_m = ptr->aristas;
+        ptr->aristas = NULL;
+        while (inicio_m->sig != NULL) {
+            ptr_m = inicio_m;
+            inicio_m = ptr_m->sig;
+            delete(ptr_m);
+        }
+        delete(inicio_m);
+        inicio_m = NULL;
+        fin_m = NULL;
+        ptr_m = NULL;
+        nuevo_m = NULL;
+    }
+
+    ptr = inicio; //Borra Estados Posibles
+    while (ptr->sig != NULL) {
+        ptr = inicio;
+        inicio = ptr->sig;
+        delete(ptr);
+    }
+    delete(inicio);
+    inicio = NULL;
+    fin = NULL;
+    ptr = NULL;
+    nuevo = NULL;
+    q0 = NULL;
 }
